@@ -16,7 +16,8 @@
 (define-syntax-class struct-id
   #:description "structure type identifier"
   #:attributes [info descriptor-id constructor-id predicate-id all-fields-visible? supertype-id
-                     [accessor-id 1] [mutator-id 1]]
+                     num-fields num-own-fields
+                     [accessor-id 1] [mutator-id 1] [own-accessor-id 1] [own-mutator-id 1]]
   [pattern id:local-value/struct-info
     #:attr info (extract-struct-info (attribute id.local-value))
     #:attr descriptor-id (first (attribute info))
@@ -31,4 +32,13 @@
                             (if (attribute all-fields-visible?)
                                 mutator-ids
                                 (rest mutator-ids)))
-    #:attr supertype-id (sixth (attribute info))])
+    #:attr supertype-id (sixth (attribute info))
+    #:attr num-fields (length (attribute accessor-id))
+    #:attr num-own-fields
+           (if (identifier? (attribute supertype-id))
+               (let* ([supertype-info (extract-struct-info (syntax-local-value #'supertype-id))]
+                      [num-supertype-fields (count identifier? (fourth supertype-info))])
+                 (- (attribute num-fields) num-supertype-fields))
+               (attribute num-fields))
+    #:attr [own-accessor-id 1] (take-right (attribute accessor-id) (attribute num-own-fields))
+    #:attr [own-mutator-id 1] (take-right (attribute mutator-id) (attribute num-own-fields))])

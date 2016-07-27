@@ -23,8 +23,9 @@ install:
   - raco pkg install --installation --auto --link
       $TRAVIS_BUILD_DIR/syntax-classes-lib
       $TRAVIS_BUILD_DIR/syntax-classes-doc
+      $TRAVIS_BUILD_DIR/syntax-classes-test
   - raco pkg install --installation --auto cover cover-coveralls
 
 script:
-  - raco test -ep syntax-classes-lib
-  - raco cover -bf coveralls -d $TRAVIS_BUILD_DIR/coverage -p syntax-classes-lib
+  - raco test -ep syntax-classes-lib syntax-classes-test
+  - raco cover -bf coveralls -d $TRAVIS_BUILD_DIR/coverage -p syntax-classes-lib syntax-classes-test

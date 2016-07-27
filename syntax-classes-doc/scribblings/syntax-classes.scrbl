@@ -106,12 +106,30 @@ value satisfies @racket[struct-info?], and it will then bind a set of attributes
   @item{The @tt{all-fields-visible?} attribute is bound to @racket[#t] if all structure fields are
         visible to the macro, otherwise it is @racket[#f].}
 
+  @item{The @tt{num-fields} attribute is bound to an exact, nonnegative integer that describes the
+        number of visible fields the structure type has, including supertype fields.}
+
   @item{The @tt{accessor-id} attribute is an attribute of @syntax-tech{ellipsis depth} 1 that is bound
-        to identifiers bound to accessors for all visible structure fields.}
+        to identifiers bound to accessors for all visible structure fields, including supertype
+        fields.}
 
   @item{The @tt{mutator-id} attribute is like @tt{accessor-id}, except that it contains identifiers
         bound to mutators instead of accessors. It is guaranteed to have the same number of elements
-        as @tt{accessor-id}; however, the value will be @racket[#f] for each non-mutable field.}]
+        as @tt{accessor-id}; however, the value will be @racket[#f] for each non-mutable field.}
+
+  @item{The @tt{supertype-id} attribute is bound to an identifier or a boolean. If it is an
+        identifier, then the identifier is a structure type transformer binding for the structure’s
+        supertype. If it is @racket[#t], then the structure has no supertype. If it is @racket[#f],
+        then the structure’s supertype is unknown.}
+
+  @item{The @tt{num-own-fields} attribute is like @tt{num-fields}, except that it does not count
+        supertype fields, only fields that belong to the structure type itself.}
+
+  @item{The @tt{own-accessor-id} attribute is like @tt{accessor-id}, except that it does not include
+        supertype fields, only fields that belong to the structure type itself.}
+
+  @item{The @tt{own-mutator-id} attribute is like @tt{mutator-id} combined with the
+        supertype-excluding behavior of @tt{own-accessor-id}.}]
 
 Due to the nature of the @tt{mutator-id} attribute, it can be useful to use @racket[template] from
 @racketmodname[syntax/parse/experimental/template] instead of @racket[syntax] when using mutator ids.
