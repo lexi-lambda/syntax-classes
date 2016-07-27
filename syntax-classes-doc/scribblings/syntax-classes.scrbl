@@ -122,6 +122,9 @@ value satisfies @racket[struct-info?], and it will then bind a set of attributes
         supertype. If it is @racket[#t], then the structure has no supertype. If it is @racket[#f],
         then the structure’s supertype is unknown.}
 
+  @item{The @tt{num-supertype-fields} attribute is like @tt{num-fields}, except that it only counts
+        supertype fields, not fields that belong to the structure type itself.}
+
   @item{The @tt{num-own-fields} attribute is like @tt{num-fields}, except that it does not count
         supertype fields, only fields that belong to the structure type itself.}
 
