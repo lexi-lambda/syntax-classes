@@ -1,17 +1,19 @@
 #lang racket/base
 
-(require data/maybe
-         racket/contract
-         racket/function
+(require racket/function
          syntax/parse)
 
 (provide local-value)
+
+(define unbound-value
+  (let ()
+    (struct unbound-value ())
+    (unbound-value)))
 
 (define-syntax-class (local-value [predicate? (const #t)] #:failure-message [message #f])
   #:description #f
   #:attributes [local-value]
   [pattern id:id
-    #:do [(define maybe-local-value (exn->maybe exn:fail:contract? syntax-local-value #'id))]
-    #:fail-unless (just? maybe-local-value) message
-    #:attr local-value (from-just! maybe-local-value)
+    #:attr local-value (syntax-local-value #'id (const unbound-value))
+    #:fail-when (eq? (attribute local-value) unbound-value) message
     #:fail-unless (predicate? (attribute local-value)) message])

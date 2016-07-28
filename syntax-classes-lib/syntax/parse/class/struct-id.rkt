@@ -2,8 +2,7 @@
 
 (require racket/require)
 
-(require data/maybe
-         (multi-in racket [bool list struct-info])
+(require (multi-in racket [bool list struct-info])
          (rename-in syntax/parse [attribute @])
          syntax/parse/class/local-value
          syntax/parse/experimental/specialize)
