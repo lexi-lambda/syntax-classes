@@ -1,7 +1,5 @@
 language: c
 
-sudo: false
-
 env:
   global:
     - RACKET_DIR: '~/racket'
@@ -12,11 +10,6 @@ env:
     - RACKET_VERSION=6.1.1 RUN_COVER=true
     - RACKET_VERSION=6.2   RUN_COVER=true
     - RACKET_VERSION=6.2.1 RUN_COVER=true
-    - RACKET_VERSION=6.3   RUN_COVER=true
-    - RACKET_VERSION=6.4   RUN_COVER=true
-    - RACKET_VERSION=6.5   RUN_COVER=true
-    - RACKET_VERSION=6.6   RUN_COVER=true
-    - RACKET_VERSION=HEAD  RUN_COVER=true
 
 before_install:
   - git clone https://github.com/greghendershott/travis-racket.git
