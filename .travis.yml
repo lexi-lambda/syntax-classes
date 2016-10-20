@@ -1,22 +1,14 @@
 language: c
 
-sudo: false
-
 env:
   global:
     - RACKET_DIR: '~/racket'
   matrix:
-    - RACKET_VERSION=6.0   TEST_FLAGS=-p
-    - RACKET_VERSION=6.0.1
-    - RACKET_VERSION=6.1
-    - RACKET_VERSION=6.1.1 RUN_COVER=true
-    - RACKET_VERSION=6.2   RUN_COVER=true
-    - RACKET_VERSION=6.2.1 RUN_COVER=true
-    - RACKET_VERSION=6.3   RUN_COVER=true
-    - RACKET_VERSION=6.4   RUN_COVER=true
-    - RACKET_VERSION=6.5   RUN_COVER=true
-    - RACKET_VERSION=6.6   RUN_COVER=true
-    - RACKET_VERSION=HEAD  RUN_COVER=true
+    - RACKET_VERSION=6.3
+    - RACKET_VERSION=6.4
+    - RACKET_VERSION=6.5
+    - RACKET_VERSION=6.6
+    - RACKET_VERSION=HEAD
 
 before_install:
   - git clone https://github.com/greghendershott/travis-racket.git
@@ -28,8 +20,8 @@ install:
       $TRAVIS_BUILD_DIR/syntax-classes-lib
       $TRAVIS_BUILD_DIR/syntax-classes-doc
       $TRAVIS_BUILD_DIR/syntax-classes-test
-  - if [ -n "$RUN_COVER" ]; then raco pkg install --installation --auto cover cover-coveralls; fi
+  - raco pkg install --installation --auto cover cover-coveralls
 
 script:
-  - raco test ${TEST_FLAGS--ep} syntax-classes-lib syntax-classes-test
-  - if [ -n "$RUN_COVER" ]; then raco cover -bf coveralls -d $TRAVIS_BUILD_DIR/coverage -p syntax-classes-lib syntax-classes-test; fi
+  - raco test -ep syntax-classes-lib syntax-classes-test
+  - raco cover -bf coveralls -d $TRAVIS_BUILD_DIR/coverage -p syntax-classes-lib syntax-classes-test

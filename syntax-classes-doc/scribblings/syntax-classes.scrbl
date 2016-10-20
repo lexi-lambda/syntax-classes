@@ -5,6 +5,7 @@
                      racket/function
                      syntax/parse
                      syntax/parse/class/local-value
+                     syntax/parse/class/paren-shape
                      syntax/parse/class/struct-id
                      syntax/parse/experimental/template)
           scribble/eval)
@@ -24,7 +25,9 @@
                                  syntax/parse
                                  syntax/parse/class/local-value
                                  syntax/parse/class/struct-id
-                                 syntax/parse/experimental/template)))
+                                 syntax/parse/experimental/template)
+                     syntax/parse
+                     syntax/parse/class/paren-shape))
      eval))
 
 @(define-syntax-rule (syntax-class-examples body ...)
@@ -78,6 +81,84 @@ is supplied.
        (println (attribute id.local-value))
        #'(void)]))
   (print-local-string/message something))}
+
+@section{Lists and pairs with @racket['paren-shape]}
+
+@defmodule[syntax/parse/class/paren-shape]
+
+@defform[#:kind "syntax class" (paren-shape shape)
+         #:contracts ([shape any/c])]{
+Parses any syntax object that has a @racket['paren-shape] syntax property with a value @racket[equal?]
+to @racket[shape].
+
+@history[#:added "1.1"]}
+
+@defidform[#:kind "syntax class" paren-shape/parens]{
+Parses any syntax object that either has @racket[#f] for the @racket['paren-shape] syntax property or
+does not have a @racket['paren-shape] syntax property at all.
+
+@history[#:added "1.1"]}
+
+@defidform[#:kind "syntax class" paren-shape/brackets]{
+Parses any syntax object that has @racket[#\[] for the @racket['paren-shape] syntax property.
+
+@history[#:added "1.1"]}
+
+@defidform[#:kind "syntax class" paren-shape/braces]{
+Parses any syntax object that has @racket[#\{] for the @racket['paren-shape] syntax property.
+
+@history[#:added "1.1"]}
+
+@defform[#:kind "pattern expander" (~parens H-pattern . S-pattern)]{
+A @syntax-tech{pattern expander} that parses a list or pair that either has @racket[#f] for the
+@racket['paren-shape] syntax property or does not have a @racket['paren-shape] syntax property at all.
+
+@(syntax-class-examples
+  (syntax-parse #'(1 2 . "three")
+    [(~parens a ... . rst)
+     (cons #'(a ...) #'rst)])
+  (eval:alts (syntax-parse #'{1 2 . "three"}
+               [(~parens a ... . rst)
+                (cons #'(a ...) #'rst)])
+             (syntax-parse (syntax-property #'{1 2 . "three"} 'paren-shape #\{)
+               [(~parens a ... . rst)
+                (cons #'(a ...) #'rst)])))
+
+@history[#:added "1.1"]}
+
+@defform[#:kind "pattern expander" [~brackets H-pattern . S-pattern]]{
+A @syntax-tech{pattern expander} that parses a list or pair that has @racket[#\[] for the
+@racket['paren-shape] syntax property.
+
+@(syntax-class-examples
+  (eval:alts (syntax-parse #'[1 2 . "three"]
+               [[~brackets a ... . rst]
+                (cons #'(a ...) #'rst)])
+             (syntax-parse (syntax-property #'[1 2 . "three"] 'paren-shape #\[)
+               [[~brackets a ... . rst]
+                (cons #'(a ...) #'rst)]))
+  (syntax-parse #'(1 2 . "three")
+    [[~brackets a ... . rst]
+     (cons #'(a ...) #'rst)]))
+
+@history[#:added "1.1"]}
+
+@defform[#:kind "pattern expander" {~braces H-pattern . S-pattern}]{
+A @syntax-tech{pattern expander} that parses a list or pair that has @racket[#\{] for the
+@racket['paren-shape] syntax property.
+
+@(syntax-class-examples
+  (eval:alts (syntax-parse #'{1 2 . "three"}
+               [{~braces a ... . rst}
+                (cons #'(a ...) #'rst)])
+             (syntax-parse (syntax-property #'{1 2 . "three"} 'paren-shape #\{)
+               [{~braces a ... . rst}
+                (cons #'(a ...) #'rst)]))
+  (syntax-parse #'(1 2 . "three")
+    [{~braces a ... . rst}
+     (cons #'(a ...) #'rst)]))
+
+@history[#:added "1.1"]}
 
 @section{Structure type transformer bindings}
 
