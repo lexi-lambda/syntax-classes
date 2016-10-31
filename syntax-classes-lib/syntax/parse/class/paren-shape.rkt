@@ -30,17 +30,17 @@
 (define-syntax ~parens
   (pattern-expander
    (syntax-parser
-     [(_ fst . snd)
-      #'{~and :paren-shape/parens (fst . snd)}])))
+     [(_ . pat)
+      #'{~and :paren-shape/parens pat}])))
 
 (define-syntax ~brackets
   (pattern-expander
    (syntax-parser
-     [(_ fst . snd)
-      #'{~and :paren-shape/brackets (fst . snd)}])))
+     [(_ . pat)
+      #'{~and :paren-shape/brackets pat}])))
 
 (define-syntax ~braces
   (pattern-expander
    (syntax-parser
-     [(_ fst . snd)
-      #'{~and :paren-shape/braces (fst . snd)}])))
+     [(_ . pat)
+      #'{~and :paren-shape/braces pat}])))
