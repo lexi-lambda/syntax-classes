@@ -8,9 +8,15 @@
          paren-shape/parens paren-shape/brackets paren-shape/braces
          ~parens ~brackets ~braces)
 
+(define (syntax-property/car stx prop)
+  (let ([val (syntax-property stx prop)])
+    (if (pair? val)
+        (car val)
+        val)))
+
 (define-syntax-class (paren-shape shape)
   #:description #f
-  [pattern _ #:when (equal? (syntax-property this-syntax 'paren-shape) shape)])
+  [pattern _ #:when (equal? (syntax-property/car this-syntax 'paren-shape) shape)])
 
 (define-syntax-class paren-shape/parens
   #:description "list or pair surrounded by parentheses"
