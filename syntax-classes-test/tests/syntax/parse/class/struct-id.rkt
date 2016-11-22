@@ -7,8 +7,15 @@
          rackunit/spec)
 
 (describe "class struct-id"
+  (struct boring ())
   (struct parent (a b))
   (struct child parent (a b))
+
+  (it "handles structs with no fields"
+    (define-syntax get-struct-info
+      (syntax-parser [(_ id:struct-id)
+                      #'id.descriptor-id]))
+    (check-equal? (get-struct-info boring) struct:boring))
 
   (describe "attribute accessor-id"
     (it "includes all accessors, including parent accessors"

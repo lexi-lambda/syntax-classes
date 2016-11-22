@@ -22,7 +22,8 @@
     #:attr descriptor-id (first (@ info))
     #:attr constructor-id (second (@ info))
     #:attr predicate-id (third (@ info))
-    #:attr all-fields-visible? (not (false? (last (fourth (@ info)))))
+    #:attr all-fields-visible? (or (empty? (fourth (@ info)))
+                                   (not (false? (last (fourth (@ info))))))
     #:attr [accessor-id 1] (let ([accessor-ids (reverse (fourth (@ info)))])
                              (if (@ all-fields-visible?)
                                  accessor-ids
