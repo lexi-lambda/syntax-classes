@@ -3,6 +3,7 @@
 @(require (for-label racket/base
                      racket/contract
                      racket/function
+                     racket/struct-info
                      syntax/parse
                      syntax/parse/class/local-value
                      syntax/parse/class/paren-shape
