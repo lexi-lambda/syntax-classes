@@ -45,8 +45,13 @@ This library provides additional @syntax-class-tech{syntax classes} for use with
 @defmodule[syntax/parse/class/local-value]
 
 @defform[#:kind "syntax class"
-         (local-value @#,elem{[@racket[_predicate?]]} @#,elem{[@racket[#:failure-message _failure-message]]})
+         (local-value @#,elem{[@racket[_predicate?]]}
+                      @#,elem{[@racket[_intdef-ctx]]}
+                      @#,elem{[@racket[#:failure-message _failure-message]]})
          #:contracts ([_predicate? @#,elem{@racket[(any/c . -> . any/c)] = @racket[(const #t)]}]
+                      [_intdef-ctx @#,elem{@racket[(or/c internal-definition-context?
+                                                         (listof internal-definition-context?)
+                                                         #f)] = @racket[#f]}]
                       [_failure-message @#,elem{@racket[(or/c string? #f)] = @racket[#f]}])]{
 A @syntax-class-tech{syntax class} for parsing identifiers bound to @guide-tech{transformer bindings}. It
 parses an identifier, then calls @racket[syntax-local-value] on it and binds the result to an
@@ -55,6 +60,11 @@ attribute named @tt{local-value}.
 If @racket[_predicate?] is specified, then @racket[_predicate?] will be applied to the result of
 @racket[syntax-local-value], and if the result is @racket[#f], then the syntax class will fail to
 match.
+
+If @racket[_intdef-ctx] is not @racket[#f], bindings from all provided definition contexts are
+considered when determining the local binding. Like the third argument to @racket[syntax-local-value],
+the @syntax-tech{scopes} associated with the provided definition contexts are @italic{not} used to
+enrich the matching identifier's @syntax-tech{lexical information}.
 
 If the identifier is not bound to a @guide-tech{transformer binding}, or if the binding does not
 satisfy @racket[_predicate?], then @racket[_failure-message] will be used as the error message, if it
