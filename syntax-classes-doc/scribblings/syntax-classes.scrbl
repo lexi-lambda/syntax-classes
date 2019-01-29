@@ -14,6 +14,9 @@
 @(define (guide-tech . pre-content)
    (apply tech #:doc '(lib "scribblings/guide/guide.scrbl") pre-content))
 
+@(define (reference-tech . pre-content)
+   (apply tech #:doc '(lib "scribblings/reference/reference.scrbl") pre-content))
+
 @(define (syntax-tech . pre-content)
    (apply tech #:doc '(lib "syntax/scribblings/syntax.scrbl") pre-content))
 
@@ -44,31 +47,34 @@ This library provides additional @syntax-class-tech{syntax classes} for use with
 
 @defmodule[syntax/parse/class/local-value]
 
-@defform[#:kind "syntax class"
-         (local-value @#,elem{[@racket[_predicate?]]}
-                      @#,elem{[@racket[_intdef-ctx]]}
-                      @#,elem{[@racket[#:failure-message _failure-message]]})
-         #:contracts ([_predicate? @#,elem{@racket[(any/c . -> . any/c)] = @racket[(const #t)]}]
-                      [_intdef-ctx @#,elem{@racket[(or/c internal-definition-context?
-                                                         (listof internal-definition-context?)
-                                                         #f)] = @racket[#f]}]
-                      [_failure-message @#,elem{@racket[(or/c string? #f)] = @racket[#f]}])]{
-A @syntax-class-tech{syntax class} for parsing identifiers bound to @guide-tech{transformer bindings}. It
-parses an identifier, then calls @racket[syntax-local-value] on it and binds the result to an
+@defproc[#:kind "syntax class"
+         (local-value [predicate? (any/c . -> . any/c) (const #t)]
+                      [intdef-ctx
+                       (or/c internal-definition-context?
+                             (listof internal-definition-context?)
+                             #f)
+                       '()]
+                      [#:name name (or/c string? #f) #f]
+                      [#:failure-message failure-message (or/c string? #f) #f])
+         @#,syntax-class-tech{syntax class}]{
+A @syntax-class-tech{syntax class} for parsing identifiers bound to @guide-tech{transformer bindings}.
+It parses an identifier, then calls @racket[syntax-local-value] on it and binds the result to an
 attribute named @tt{local-value}.
 
-If @racket[_predicate?] is specified, then @racket[_predicate?] will be applied to the result of
+If @racket[predicate?] is specified, then @racket[predicate?] will be applied to the result of
 @racket[syntax-local-value], and if the result is @racket[#f], then the syntax class will fail to
 match.
 
-If @racket[_intdef-ctx] is not @racket[#f], bindings from all provided definition contexts are
+If @racket[intdef-ctx] is not @racket[#f], bindings from all provided definition contexts are
 considered when determining the local binding. Like the third argument to @racket[syntax-local-value],
-the @syntax-tech{scopes} associated with the provided definition contexts are @italic{not} used to
-enrich the matching identifier's @syntax-tech{lexical information}.
+the @reference-tech{scopes} associated with the provided definition contexts are @italic{not} used to
+enrich the matching identifier's @reference-tech{lexical information}.
 
 If the identifier is not bound to a @guide-tech{transformer binding}, or if the binding does not
-satisfy @racket[_predicate?], then @racket[_failure-message] will be used as the error message, if it
-is supplied.
+satisfy @racket[predicate?], then @racket[name] will be used when generating a parse error message, if
+it is not @racket[#f]. If @racket[failure-message] is not @racket[#f], it will be used instead of the
+generated message, though the value of @racket[name] will still be used to show supplemental error
+information.
 
 @(syntax-class-examples
   (define-syntax print-local
@@ -86,12 +92,24 @@ is supplied.
        #'(void)]))
   (print-local-string something)
 
-  (define-syntax print-local-string/message
+  (define-syntax print-local-string/name
     (syntax-parser
-      [(_ {~var id (local-value string? #:failure-message "identifier was not bound to a string")})
+      [(_ {~var id (local-value string? #:name "string")})
        (println (attribute id.local-value))
        #'(void)]))
-  (print-local-string/message something))}
+  (print-local-string/name something)
+
+  (define-syntax print-local-string/message
+    (syntax-parser
+      [(_ {~var id (local-value
+                    string?
+                    #:name "string"
+                    #:failure-message "identifier was not bound to a string")})
+       (println (attribute id.local-value))
+       #'(void)]))
+  (print-local-string/message something))
+
+@history[#:changed "1.2" @elem{Added @racket[#:name] argument.}]}
 
 @section{Lists and pairs with @racket['paren-shape]}
 

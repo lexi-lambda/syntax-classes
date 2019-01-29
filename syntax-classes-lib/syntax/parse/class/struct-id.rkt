@@ -10,10 +10,11 @@
 (provide struct-id)
 
 (define-syntax-class/specialize local-value/struct-info
-  (local-value struct-info? #:failure-message "identifier is not bound to a structure type"))
+  (local-value struct-info? #:name "structure type"))
 
 (define-syntax-class struct-id
-  #:description "structure type identifier"
+  #:description #f
+  #:commit
   #:attributes [info descriptor-id constructor-id predicate-id all-fields-visible? supertype-id
                      num-fields num-supertype-fields num-own-fields
                      [accessor-id 1] [mutator-id 1] [own-accessor-id 1] [own-mutator-id 1]]
