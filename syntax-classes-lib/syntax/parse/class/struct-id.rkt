@@ -16,7 +16,7 @@
   #:description #f
   #:commit
   #:attributes [info descriptor-id constructor-id predicate-id all-fields-visible? supertype-id
-                     num-fields num-supertype-fields num-own-fields
+                     num-fields num-supertype-fields num-own-fields own-fields
                      [accessor-id 1] [mutator-id 1] [own-accessor-id 1] [own-mutator-id 1]]
   [pattern id:local-value/struct-info
     #:attr info (extract-struct-info (@ id.local-value))
@@ -41,5 +41,7 @@
                  (count identifier? (fourth supertype-info)))
                0)
     #:attr num-own-fields (- (@ num-fields) (@ num-supertype-fields))
+    #:attr own-fields (and (struct-field-info? (@ id.local-value))
+                           (reverse (struct-field-info-list (@ id.local-value))))
     #:attr [own-accessor-id 1] (take-right (@ accessor-id) (@ num-own-fields))
     #:attr [own-mutator-id 1] (take-right (@ mutator-id) (@ num-own-fields))])

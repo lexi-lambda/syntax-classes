@@ -35,4 +35,16 @@
       (check-equal? (struct-own-accessors parent)
                     (list parent-a parent-b))
       (check-equal? (struct-own-accessors child)
-                    (list child-a child-b)))))
+                    (list child-a child-b))))
+
+  (describe "attribute own-fields"
+    (it "includes field symbols, but not parent fields"
+      (define-syntax struct-own-fields
+        (syntax-parser [(_ id:struct-id)
+                        #`'#,(attribute id.own-fields)]))
+      (check-equal? (struct-own-fields boring)
+                    (list))
+      (check-equal? (struct-own-fields parent)
+                    (list 'a 'b))
+      (check-equal? (struct-own-fields child)
+                    (list 'a 'b)))))
