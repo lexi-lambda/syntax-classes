@@ -242,6 +242,10 @@ value satisfies @racket[struct-info?], and it will then bind a set of attributes
         field name (not including supertype fields), or @racket[#f] if the transformer value does not
         implement @racket[prop:struct-field-info].}
 
+  @item{The @tt{all-fields} attribute is bound to either a list of symbols containing every
+        field name including supertype fields which can re-use field names, or @racket[#f] if it
+        or any of its supertypes does not implement @racket[prop:struct-field-info].}
+
   @item{The @tt{own-accessor-id} attribute is like @tt{accessor-id}, except that it does not include
         supertype fields, only fields that belong to the structure type itself.}
 

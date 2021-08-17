@@ -16,7 +16,7 @@
   #:description #f
   #:commit
   #:attributes [info descriptor-id constructor-id predicate-id all-fields-visible? supertype-id
-                     num-fields num-supertype-fields num-own-fields own-fields
+                     num-fields num-supertype-fields num-own-fields own-fields all-fields
                      [accessor-id 1] [mutator-id 1] [own-accessor-id 1] [own-mutator-id 1]]
   [pattern id:local-value/struct-info
     #:attr info (extract-struct-info (@ id.local-value))
@@ -43,5 +43,20 @@
     #:attr num-own-fields (- (@ num-fields) (@ num-supertype-fields))
     #:attr own-fields (and (struct-field-info? (@ id.local-value))
                            (reverse (struct-field-info-list (@ id.local-value))))
+    #:attr all-fields (get-all-fields (@ id.local-value) (@ info))
     #:attr [own-accessor-id 1] (take-right (@ accessor-id) (@ num-own-fields))
     #:attr [own-mutator-id 1] (take-right (@ mutator-id) (@ num-own-fields))])
+
+(define (get-all-fields locval info)
+  (define supertype-id (sixth info))
+  (cond
+    [(not (struct-field-info? locval)) #false]
+    [(not (identifier? supertype-id)) (reverse (struct-field-info-list locval))]
+    [else
+     (define supertype-locval (syntax-local-value supertype-id))
+     (define supertype-info (extract-struct-info supertype-locval))
+     (define supertype-fields (get-all-fields supertype-locval supertype-info))
+     (and supertype-fields
+          (append supertype-fields
+                  (reverse (struct-field-info-list locval))))]))
+
